@@ -99,25 +99,25 @@
     const nextBtn = document.getElementById('nextBtn');
 
     const originalSlides = [
-      { img:".images/image1.JPG",
+      { img:"./images/image1.JPG",
         caption: "なぜ私たちは衛星を作るのか？ アークエッジスペース創業の想いと挑戦",
-        link: "https://careers.arkedgespace.com/1f450dbaf1368024b351d272b0f8bd53"
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf1368024b351d272b0f8bd53?pvs=4"
       },
-      { img:".images/image2.JPG",
+      { img:"./images/image2.JPG",
         caption: "宇宙で衛星が「ピタッ」と止まる秘密？ 人工衛星の「姿勢制御」入門",
-        link: "https://careers.arkedgespace.com/1f450dbaf13680ef9885c27170b71574"
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf13680ef9885c27170b71574?pvs=4"
       },
-      { img:".images/image3.JPG",
+      { img:"./images/image3.JPG",
         caption: "宇宙と通信する巨大アンテナ：アークエッジスペース牧之原地上局の役割とは？",
-        link: "https://careers.arkedgespace.com/1f450dbaf13680e68328e6cf538a630b"
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf13680e68328e6cf538a630b?pvs=4"
       },
-      { img:".images/image4.JPG",
+      { img:"./images/image4.JPG",
         caption: "宇宙技術でアフリカの未来を共創：アークエッジスペースとルワンダの連携プロジェクト",
-        link: "https://careers.arkedgespace.com/1f450dbaf13680a1b1b4eec7510071ce"
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf13680a1b1b4eec7510071ce?pvs=4"
       },
-      { img:".images/image5.JPG",
+      { img:"./images/image5.JPG",
         caption: "アイデアが宇宙へ！人工衛星ができるまでの道のり",
-        link: "https://careers.arkedgespace.com/1f450dbaf1368075899ce45c991910ef"
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf1368075899ce45c991910ef?pvs=4"
       },
     ];
 
@@ -126,10 +126,11 @@
 
     function renderSlides() {
       const html = fullSlides.map(slide => `
-      <div class="slide">
-      <img src="<span class="math-inline">\{slide\.img\}" alt\="</span>{slide.caption}">
-      <a href="<span class="math-inline">\{slide\.link\}" class\="caption" target\="\_blank" rel\="noopener noreferrer"\></span>{slide.caption}</a>
-      </div>`).join('');
+        <div class="slide">
+          <img src="${slide.img}" alt="${slide.caption}">
+          <div class="caption">${slide.caption}</div>
+        </div>`).join('');
+      track.innerHTML = html;
     }
 
     let slides;
