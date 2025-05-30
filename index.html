@@ -1,16 +1,239 @@
-# 1. 該当フォルダへ移動
-cd /Users/shibuya-jiei/Desktop/notion_test
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レスポンシブスライダー（滑らか右ループ）</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      font-family: sans-serif;
+    }
+    .slider-wrapper {
+      max-width: 100%;
+      margin: auto auto;
+      overflow: hidden;
+      position: relative;
+      padding: 0 20px;
+    }
+    .slider {
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .slider-track {
+      display: flex;
+      transition: transform 0.5s ease;
+      will-change: transform;
+    }
+    .slide {
+      flex-shrink: 0;
+      margin: 0 10px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .slide img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+    .slide:hover {
+      transform: scale(1.1);
+    }
+    .caption {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 80px;
+      line-height: 1.4;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px 5px;
+      color: #000;
+      background: #fff;
+      text-decoration: none;
+    }
+    .caption:hover {
+      text-decoration: underline;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      font-size: 24px;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .arrow.prev { left: 0; }
+    .arrow.next { right: 0; }
+  </style>
+</head>
+<body>
+  <div class="slider-wrapper">
+    <button class="arrow prev" id="prevBtn">&#9664;</button>
+    <div class="slider" id="slider">
+      <div class="slider-track" id="slider-track">
+        <!-- スライド生成はJSで -->
+      </div>
+    </div>
+    <button class="arrow next" id="nextBtn">&#9654;</button>
+  </div>
 
-# 2. Git初期化
-git init
+  <script>
+    const slider = document.getElementById('slider');
+    const track = document.getElementById('slider-track');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-# 3. GitHubのリポジトリを紐付け
-git remote add origin https://github.com/ユーザー名/my-website.git
+    const originalSlides = [
+      { img:"https://cdn.glitch.global/ebb45a3a-6711-41d6-a2d2-2a1c11248e55/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%896.JPG?v=1747975016439",
+        caption: "なぜ私たちは衛星を作るのか？ アークエッジスペース創業の想いと挑戦",
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf1368024b351d272b0f8bd53?pvs=4"
+      },
+      { img:"https://cdn.glitch.global/ebb45a3a-6711-41d6-a2d2-2a1c11248e55/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%895.JPG?v=1747975011576",
+        caption: "宇宙で衛星が「ピタッ」と止まる秘密？ 人工衛星の「姿勢制御」入門",
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf13680ef9885c27170b71574?pvs=4"
+      },
+      { img:"https://cdn.glitch.global/ebb45a3a-6711-41d6-a2d2-2a1c11248e55/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%893.JPG?v=1747974998137",
+        caption: "宇宙と通信する巨大アンテナ：アークエッジスペース牧之原地上局の役割とは？",
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf13680e68328e6cf538a630b?pvs=4"
+      },
+      { img:"https://cdn.glitch.global/ebb45a3a-6711-41d6-a2d2-2a1c11248e55/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%892.JPG?v=1747974993823",
+        caption: "宇宙技術でアフリカの未来を共創：アークエッジスペースとルワンダの連携プロジェクト",
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf13680a1b1b4eec7510071ce?pvs=4"
+      },
+      { img:"https://cdn.glitch.global/ebb45a3a-6711-41d6-a2d2-2a1c11248e55/%E3%82%B9%E3%83%A9%E3%82%A4%E3%83%894.JPG?v=1747975003998",
+        caption: "アイデアが宇宙へ！人工衛星ができるまでの道のり",
+        link: "https://psychedelic-custard-5b2.notion.site/1f450dbaf1368075899ce45c991910ef?pvs=4"
+      },
+    ];
 
-# 4. ファイル追加＆コミット
-git add .
-git commit -m "Initial commit"
+    const duplicateSlides = originalSlides.slice(0, 3); // Slide 1〜3 を複製
+    const fullSlides = [...originalSlides, ...duplicateSlides];
 
-# 5. ブランチを main にしてPush
-git branch -M main
-git push -u origin main
+    function renderSlides() {
+      const html = fullSlides.map(slide => `
+        <div class="slide">
+          <img src="${slide.img}" alt="${slide.caption}">
+          <div class="caption">${slide.caption}</div>
+        </div>`).join('');
+      track.innerHTML = html;
+    }
+
+    let slides;
+    let slideWidth = 0;
+    let visibleSlides = 1;
+    let currentIndex = 0;
+    let autoScroll;
+
+    function calculateSlideWidth() {
+      slides = document.querySelectorAll('.slide');
+      const screenWidth = window.innerWidth;
+      visibleSlides = screenWidth >= 1024 ? 3 : screenWidth >= 768 ? 2 : 1;
+      slideWidth = slider.clientWidth / visibleSlides;
+      slides.forEach(slide => {
+        slide.style.width = `${slideWidth - 20}px`;
+      });
+    }
+
+    function updateSlide(animate = true) {
+      track.style.transition = animate ? 'transform 0.5s ease' : 'none';
+      track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    }
+
+    function checkLoop() {
+      const DUPLICATE_COUNT = 3;
+      if (currentIndex >= slides.length - DUPLICATE_COUNT) {
+        setTimeout(() => {
+          track.style.transition = 'none';
+          currentIndex = 0;
+          updateSlide(false);
+        }, 510);
+      }
+    }
+
+    function startAutoScroll() {
+      return setInterval(() => {
+        currentIndex++;
+        updateSlide();
+        checkLoop();
+      }, 4000);
+    }
+
+    function setupEvents() {
+      window.addEventListener('resize', () => {
+        calculateSlideWidth();
+        updateSlide(false);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        clearInterval(autoScroll);
+        currentIndex++;
+        updateSlide();
+        checkLoop();
+        autoScroll = startAutoScroll();
+      });
+
+      prevBtn.addEventListener('click', () => {
+        clearInterval(autoScroll);
+        if (currentIndex === 0) {
+          currentIndex = slides.length - 4;
+          updateSlide(false);
+        } else {
+          currentIndex--;
+          updateSlide();
+        }
+        autoScroll = startAutoScroll();
+      });
+
+      let startX = 0, endX = 0;
+      slider.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        clearInterval(autoScroll);
+      });
+
+      slider.addEventListener('touchmove', (e) => {
+        endX = e.touches[0].clientX;
+      });
+
+      slider.addEventListener('touchend', () => {
+        const distance = endX - startX;
+        if (distance > 50) {
+          if (currentIndex === 0) {
+            currentIndex = slides.length - 4;
+            updateSlide(false);
+          } else {
+            currentIndex--;
+          }
+        } else if (distance < -50) {
+          currentIndex++;
+        }
+        updateSlide();
+        setTimeout(checkLoop, 510);
+        autoScroll = startAutoScroll();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSlides();
+      calculateSlideWidth();
+      updateSlide(false);
+      autoScroll = startAutoScroll();
+      setupEvents();
+    });
+  </script>
+</body>
+</html>
