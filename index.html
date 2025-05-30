@@ -126,11 +126,10 @@
 
     function renderSlides() {
       const html = fullSlides.map(slide => `
-        <div class="slide">
-          <img src="${slide.img}" alt="${slide.caption}">
-          <div class="caption">${slide.caption}</div>
-        </div>`).join('');
-      track.innerHTML = html;
+      <div class="slide">
+      <img src="<span class="math-inline">\{slide\.img\}" alt\="</span>{slide.caption}">
+      <a href="<span class="math-inline">\{slide\.link\}" class\="caption" target\="\_blank" rel\="noopener noreferrer"\></span>{slide.caption}</a>
+      </div>`).join('');
     }
 
     let slides;
