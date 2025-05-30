@@ -126,7 +126,7 @@
 
     function renderSlides() {
       const html = fullSlides.map(slide => `
-        <a herf="${slide.link}" class="slide" target="_blank" rel="noopener noreferrer">
+        <a href="${slide.link}" class="slide" target="_blank" rel="noopener noreferrer">
           <img src="${slide.img}" alt="${slide.caption}">
           <div class="caption">${slide.caption}</div>
         </a>`).join('');
